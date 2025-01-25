@@ -14,7 +14,6 @@ def simple_search(search_str: str, transactions: List[Dict[str, Any]]) -> List[D
     Функция, которая получает строку для поиска и список транзакций.
     Выводит список транзакций, в которых есть данная строка
     """
-
     if not isinstance(search_str, str):
         raise TypeError("Неверный тип данных")
     new_list_transactions = []
