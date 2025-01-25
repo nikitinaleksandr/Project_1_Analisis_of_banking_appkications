@@ -45,9 +45,24 @@ def coll():
         }]
 # assert json.loads(simple_search(search_str="USD", transactions=coll)) == ...
 
+# def test_simple_search(coll):
+#     '''Тестирование правильности работы функции'''
+#     assert simple_search(search_str="USD", transactions=coll) == json.dumps(coll)
+#     assert simple_search(search_str="939719570", transactions=coll) == json.dumps(coll)
+#     assert simple_search(search_str="2018", transactions=coll) == json.dumps(coll)
+#     assert simple_search(search_str="9824", transactions=coll) == json.dumps(coll)
+#     assert simple_search(search_str="EXE", transactions=coll) == json.dumps(coll)
+#     assert simple_search(search_str="Перевод", transactions=coll) == json.dumps(coll)
+#     assert simple_search(search_str="7510", transactions=coll) == json.dumps(coll)
+#     assert simple_search(search_str="66702", transactions=coll) == json.dumps(coll)
+
 def test_simple_search(coll):
     '''Тестирование правильности работы функции'''
-    assert simple_search(search_str="USD", transactions=coll) == json.dumps(coll)
+    expected_result = coll  # Ожидаемый список транзакций
+    assert simple_search(search_str="USD", transactions=coll) == expected_result
+
+
+
 
 
 def test_simple_search_not_search_str(coll):
@@ -71,3 +86,15 @@ def test_simple_search_not_str_search_str(coll):
 
     with pytest.raises(TypeError, match="Неверный тип данных"):
         simple_search(search_str=11, transactions=coll)
+
+# def test_simple_search_not_str_search_str(coll):
+#     '''
+#     Тестирование правильности функции по добавлению данных в список new_list_transactions
+#     при совпадении данных со строкой поиска search_str
+#     '''
+#     assert
+def test_simple_search_type_error():
+    '''Тест на выпадение ошибки при вводе неверного типа данных'''
+    transactions = [{'description': 'покупка'}, {'description': 'оплата'}]
+    with pytest.raises(TypeError, match="Неверный тип данных"):
+        simple_search(search_str=123, transactions=transactions)

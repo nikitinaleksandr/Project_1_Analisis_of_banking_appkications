@@ -14,10 +14,9 @@ def simple_search(search_str: str, transactions: List[Dict[str, Any]]) -> List[D
     Функция, которая получает строку для поиска и список транзакций.
     Выводит список транзакций, в которых есть данная строка
     """
+
     if not isinstance(search_str, str):
         raise TypeError("Неверный тип данных")
-
-
     new_list_transactions = []
     for item in transactions:
         # print(item)
@@ -41,8 +40,8 @@ def simple_search(search_str: str, transactions: List[Dict[str, Any]]) -> List[D
         elif search_str in item['operationAmount']['currency']['code']:
             new_list_transactions.append(item)
 
-
-    result = json.dumps(new_list_transactions)
+    result = new_list_transactions
+    # result = json.dumps(new_list_transactions)
     logger.info("Вывод отфильтрованных по заданной пользователем строке транзакций")
         # for i in item:
         #     print(i)
@@ -53,8 +52,8 @@ def simple_search(search_str: str, transactions: List[Dict[str, Any]]) -> List[D
         return []
 
 
-    result_json = json.dumps(result, ensure_ascii=False)
-    print(result_json)
+    # result_json = json.dumps(result, ensure_ascii=False)
+    # print(result_json)
     print("Результат simple_search:", result)
     return result
 
