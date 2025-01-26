@@ -56,13 +56,11 @@ def coll():
 #     assert simple_search(search_str="7510", transactions=coll) == json.dumps(coll)
 #     assert simple_search(search_str="66702", transactions=coll) == json.dumps(coll)
 
+
 def test_simple_search(coll):
     '''Тестирование правильности работы функции'''
     expected_result = coll  # Ожидаемый список транзакций
     assert simple_search(search_str="USD", transactions=coll) == expected_result
-
-
-
 
 
 def test_simple_search_not_search_str(coll):
@@ -79,7 +77,7 @@ def test_simple_search_not_search_str(coll):
 def test_simple_search_not_search_str(coll):
     '''Тестирование правильности работы функции при отсутствии search_str в transactions'''
 
-    assert json.loads((simple_search(search_str = "fG", transactions=coll))) == []
+    assert (simple_search(search_str = "fG", transactions=coll)) == []
 
 def test_simple_search_not_str_search_str(coll):
     '''Тестирование правильности работы функции при неверном типе данных search_str'''

@@ -6,6 +6,9 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv('../.env')
+import logging
+from src.logger import setup_logging
+from pathlib import Path
 
 import pandas as pd
 current_dir = Path(__file__).parent.parent.resolve()

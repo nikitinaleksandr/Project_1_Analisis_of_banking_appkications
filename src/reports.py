@@ -14,6 +14,14 @@ print(dir_transactions_excel)
 from src.logger import setup_logging
 current_dir = Path(__file__).parent.parent.resolve()
 file_path_log = current_dir/'../log', 'reports.log'
+# base_dir = "tests"
+# sub_dir = "data"
+# file_name = "test_file.txt"
+# full_path = os.path.join(base_dir, sub_dir, file_name)
+# print(full_path)
+
+
+
 logger = setup_logging('reports', file_path_log)
 
 
@@ -29,7 +37,7 @@ def save_report(filename=None):
                 file_name = f"report_{func.__name__}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
 
             # Сохранение результата в файл
-
+            logger.info("Сохранение результата в файл data/file")
             if not os.path.exists('data'):
                 os.makedirs('data')
             file_path = f'data/{file_name}'
@@ -43,7 +51,7 @@ def save_report(filename=None):
         #     os.makedirs('data')# проверка, что директория существует
 
             save_to_file(result, file_path)
-            logger.info("Сохранение результата в файл data/file")
+
             print(save_to_file)
             print("Результат функции:", result)
             return result
@@ -73,7 +81,7 @@ def spending_by_category(transactions: pd.DataFrame,
         if pd.to_datetime(date, dayfirst=True) - timedelta(days=90) <= pd.to_datetime(date_operation['Дата операции'],
                          dayfirst=True) <= pd.to_datetime(date, dayfirst=True):
             output_file_2.append(date_operation)
-
+    logger.info("Траты по заданной категории за последние 3 месяца от переданной даты")
     return output_file_2
 
 
