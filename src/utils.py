@@ -71,7 +71,8 @@ def max_five_transactions(data_time: pd) -> list:
     df1 = df.loc[((pd.to_datetime(df['Дата операции'], dayfirst=True)) <= data_time) &
                  ((pd.to_datetime(df['Дата операции'], dayfirst=True)) >= data_time.replace(day=1))]
     sorted_by_sale = df1.sort_values(by='Сумма операции с округлением', ascending=False).head(5)
-    print(sorted_by_sale)
+    return sorted_by_sale
+    # print(sorted_by_sale)
 
 
 if __name__ == '__main__':
