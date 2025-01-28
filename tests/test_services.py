@@ -55,6 +55,10 @@ def coll():
 #     assert simple_search(search_str="Перевод", transactions=coll) == json.dumps(coll)
 #     assert simple_search(search_str="7510", transactions=coll) == json.dumps(coll)
 #     assert simple_search(search_str="66702", transactions=coll) == json.dumps(coll)
+r
+
+
+
 
 
 def test_simple_search(coll):
