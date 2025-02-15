@@ -108,8 +108,6 @@ def spending_by_category(transactions: pd.DataFrame,
     logger.info("Траты по заданной категории за последние 3 месяца от переданной даты")
     return recent_transactions.to_dict('records')
 
-
-
 if __name__ == '__main__':
     spending_by_category(pd.read_excel(dir_transactions_excel), 'Фастфуд', '11.11.2019')
 

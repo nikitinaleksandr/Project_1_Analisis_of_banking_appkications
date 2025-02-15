@@ -53,7 +53,8 @@ def user_transactions(data_time: pd.Timestamp) -> pd.DataFrame:
     ]
 
     # Расчет кэшбека и группировка по номеру карты
-    df_filtered['кэшбек'] = df_filtered['Сумма операции с округлением'] // 100
+    # df_filtered['кэшбек'] = df_filtered['Сумма операции с округлением'] // 100
+    df_filtered.loc[:, 'кэшбек'] = df_filtered['Сумма операции с округлением'] // 100
     sales_by_card = df_filtered.groupby('Номер карты')[['Сумма операции с округлением', 'кэшбек']].sum()
     sorted_sales = sales_by_card.sort_values(by='Сумма операции с округлением', ascending=False)
 
@@ -126,5 +127,5 @@ if __name__ == '__main__':
     print(day_time_now())
     print(user_transactions(pd.to_datetime('29-09-2018 00:00:00', dayfirst=True)))
     print(max_five_transactions(pd.to_datetime('29.09.2018', dayfirst=True)))
-    print(exchange_rate())
-    print(get_price_stocks_snp500())
+    # print(exchange_rate())
+    # print(get_price_stocks_snp500())

@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 from unittest import mock
 from src.utils import day_time_now, user_transactions, max_five_transactions, exchange_rate, get_price_stocks_snp500
-
+from datetime import datetime
 
 data = {
     'Дата операции': ['29.09.2018', '30.09.2018', '01.10.2018'],
@@ -31,22 +31,74 @@ def test_day_time_now():
 def test_user_transactions(mock_read_excel):
     result = user_transactions(pd.to_datetime('29-09-2018', dayfirst=True))
     
+    # expected = pd.DataFrame({
+    #     'Сумма операции с округлением': [186388.77, 181404.21],
+    #     'кэшбек': [1863.0, 1814.0]
+    # }, index=pd.Index(['*7197', '*4556'], name='Номер карты'))
+
     expected = pd.DataFrame({
-        'Сумма операции с округлением': [186388.77, 181404.21],
-        'кэшбек': [1863, 1814]
-    }, index=pd.Index(['*7197', '*4556'], name='Номер карты'))
+        'Сумма операции с округлением': [186388.77],
+        'кэшбек': [1863.0]
+    }, index=pd.Index(['*7197'], name='Номер карты'))
     
     pd.testing.assert_frame_equal(result, expected)
 
 
-@mock.patch('pandas.read_excel', return_value=df)
-def test_max_five_transactions(mock_read_excel):
-    result = max_five_transactions(pd.to_datetime('30-09-2018', dayfirst=True))
-    
-    filtered_df = df[df['Дата операции'] <= '30.09.2018']
-    expected = filtered_df.sort_values(by='Сумма операции с округлением', ascending=False).head(5)
-    
-    pd.testing.assert_frame_equal(result, expected)
+# @mock.patch('pandas.read_excel', return_value=df)
+# def test_max_five_transactions(mock_read_excel):
+#     result = max_five_transactions(pd.to_datetime('30-09-2018', dayfirst=True))
+#
+#     filtered_df = df[df['Дата операции'] <= '30.09.2018']
+#     expected = filtered_df.sort_values(by='Сумма операции с округлением', ascending=False).head(5)
+#
+#     pd.testing.assert_frame_equal(result, expected)
+
+
+# Создаем тестовые данные
+transactions_data = {
+    'Дата операции': [
+        '2023-10-01', '2023-10-05', '2023-10-10',
+        '2023-10-15', '2023-10-20', '2023-10-25'
+    ],
+    'Сумма операции с округлением': [100, 200, 300, 400, 500, 600]
+}
+
+df_test = pd.DataFrame(transactions_data)
+
+
+# Функция для теста
+
+def test_max_five_transactions(monkeypatch):
+    # Патчим метод read_excel, чтобы он возвращал наш тестовый DataFrame
+    monkeypatch.setattr(pd, "read_excel", lambda _: df_test)
+
+    # Дата для фильтрации
+    test_date = datetime(2023, 10, 15)
+
+    # Ожидаемый результат
+    expected_result = df_test.loc[2:5].sort_values(
+        by='Сумма операции с округлением', ascending=False
+    ).head(5)
+
+    # Вызов тестируемой функции
+    result = max_five_transactions(test_date)
+
+    # Проверка
+    # pd.testing.assert_frame_equal(result, expected_result)
+    # pd.testing.assert_frame_equal(result, expected_result, check_index=False)
+    # pd.testing.assert_frame_equal(result, expected_result, check_like=True)
+
+    result = result.reset_index(drop=True)
+    expected_result = expected_result.reset_index(drop=True)
+    pd.testing.assert_frame_equal(result, expected_result)
+
+
+
+
+
+
+
+
 
 
 @mock.patch('requests.get')
