@@ -1,68 +1,96 @@
-from src.config import API_KEY_exchange, API_KEY_stocks
 import pytest
-from src.utils import day_time_now, max_five_transactions, exchange_rate, get_price_stocks_snp500
-import json
-import datetime
-from unittest.mock import patch
-from datetime import date
-from unittest.mock import Mock
-from dotenv import load_dotenv
-load_dotenv('../.env')
 import pandas as pd
+from unittest import mock
+from src.utils import day_time_now, user_transactions, max_five_transactions, exchange_rate, get_price_stocks_snp500
 
 
+data = {
+    'Дата операции': ['29.09.2018', '30.09.2018', '01.10.2018'],
+    'Номер карты': ['*7197', '*4556', '*7197'],
+    'Сумма операции с округлением': [186388.77, 181404.21, 150000.00]
+}
+
+df = pd.DataFrame(data)
 
 
-@patch('datetime.datetime.now')
-def test_test_day_time_now(mosk_time_now):
-    '''Тестирование правильности работы функции'''
-    mosk_time_now.return_value = datetime.datetime(2021, 1, 25, 14)
-    assert day_time_now() == "Добрый день"
+def test_day_time_now():
+    current_hour = pd.Timestamp.now().hour
+    greeting = day_time_now()
+    
+    if 0 <= current_hour < 6 or 22 <= current_hour <= 23:
+        assert greeting == "Доброй ночи"
+    elif 17 <= current_hour <= 22:
+        assert greeting == "Добрый вечер"
+    elif 7 <= current_hour <= 11:
+        assert greeting == "Доброе утро"
+    else:
+        assert greeting == "Добрый день"
 
 
-def test_max_five_transactions():
-    # Создаем тестовый DataFrame с фиктивными данными
-    data = {
-        'Дата операции': ['01.09.2018', '15.09.2018', '20.09.2018', '25.09.2018', '28.09.2018', '30.09.2018'],
-        'Сумма операции с округлением': [1000, 2000, 1500, 3000, 2500, 500]
-    }
-    test_df = pd.DataFrame(data)
+@mock.patch('pandas.read_excel', return_value=df)
+def test_user_transactions(mock_read_excel):
+    result = user_transactions(pd.to_datetime('29-09-2018', dayfirst=True))
+    
+    expected = pd.DataFrame({
+        'Сумма операции с округлением': [186388.77, 181404.21],
+        'кэшбек': [1863, 1814]
+    }, index=pd.Index(['*7197', '*4556'], name='Номер карты'))
+    
+    pd.testing.assert_frame_equal(result, expected)
 
-    # Преобразуем даты в формат datetime
-    test_df['Дата операции'] = pd.to_datetime(test_df['Дата операции'], dayfirst=True)
 
-    # Теперь ты можешь использовать этот DataFrame для тестирования своей функции
-    assert max_five_transactions(test_df['Дата операции']) == [['01.09.2018', '1000'], ['20.09.2018', '1500'],
-                                                               ['15.09.2018', '2000'], ['28.09.2018','2500'],
-                                                               ['25.09.2018','3000']]
+@mock.patch('pandas.read_excel', return_value=df)
+def test_max_five_transactions(mock_read_excel):
+    result = max_five_transactions(pd.to_datetime('30-09-2018', dayfirst=True))
+    
+    filtered_df = df[df['Дата операции'] <= '30.09.2018']
+    expected = filtered_df.sort_values(by='Сумма операции с округлением', ascending=False).head(5)
+    
+    pd.testing.assert_frame_equal(result, expected)
 
-def test_exchange_rate(mocker):
-    # Создаем фиктивный ответ от API
-    mock_response = Mock()
-    mock_response.status_code = 200
-    mock_response.text = json.dumps({"result": 75.0})
 
-    # Используем mocker для замены requests.request на наш мок
-    mocker.patch('requests.request', return_value=mock_response)
-
-    # Вызываем тестируемую функцию
+@mock.patch('requests.get')
+def test_exchange_rate(mock_requests_get):
+    mock_requests_get.side_effect = [
+        mock.Mock(json=lambda: {
+            "success": True,
+            "result": 94.16688
+        }),
+        mock.Mock(json=lambda: {
+            "success": True,
+            "result": 97.275313
+        })
+    ]
+    
     result = exchange_rate()
+    expected = [94.16688, 97.275313]
+    
+    assert result == expected
 
-    # Проверяем, что функция возвращает ожидаемый результат
-    assert result == [75.0, 75.0]  # Ожидаем, что обе валюты вернут 75.0
 
-
-def test_get_price_stocks_snp500(mocker):
-    # Создаем фиктивный ответ от API
-    mock_response = Mock()
-    mock_response.status_code = 200
-    mock_response.text = json.dumps({"result": 275.0})
-
-    # Используем mocker для замены requests.request на наш мок
-    mocker.patch('requests.get', return_value=mock_response)
-
-    # Вызываем тестируемую функцию
+@mock.patch('requests.get')
+def test_get_price_stocks_snp500(mock_requests_get):
+    stock_prices = [
+        {'price': '232.62000'},
+        {'price': '232.75999'},
+        {'price': '185.32001'},
+        {'price': '411.44000'},
+        {'price': '328.5'}
+    ]
+    
+    mock_requests_get.side_effect = [
+        mock.Mock(json=lambda: stock_prices[0]),
+        mock.Mock(json=lambda: stock_prices[1]),
+        mock.Mock(json=lambda: stock_prices[2]),
+        mock.Mock(json=lambda: stock_prices[3]),
+        mock.Mock(json=lambda: stock_prices[4])
+    ]
+    
     result = get_price_stocks_snp500()
+    expected = ['232.62000', '232.75999', '185.32001', '411.44000', '328.5']
+    
+    assert result == expected
 
-    # Проверяем, что функция возвращает ожидаемый результат
-    assert result == [275.0, 275.0]  # Ожидаем, что стоимость акций будет 275
+
+if __name__ == "__main__":
+    pytest.main()

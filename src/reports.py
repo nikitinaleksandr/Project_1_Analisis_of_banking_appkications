@@ -69,20 +69,45 @@ def spending_by_category(transactions: pd.DataFrame,
     опциональную дату. Если дата не передана, то берется текущая дата. Функция возвращает
     траты по заданной категории за последние три месяца (от переданной даты).
     '''
+    # transactions['Дата операции'] = pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y')
+    # transactions['Дата операции'] = pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y %H:%M:%S',
+    #                                                errors='coerce')
+    transactions['Дата операции'] = pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y')
 
-    df = pd.read_excel(dir_transactions_excel)
-    transactions = df.to_dict('records')
-    output_file = []
-    for trans in transactions:
-        if trans['Категория'] == category:
-            output_file.append(trans)
-    output_file_2 = []
-    for date_operation in output_file:
-        if pd.to_datetime(date, dayfirst=True) - timedelta(days=90) <= pd.to_datetime(date_operation['Дата операции'],
-                         dayfirst=True) <= pd.to_datetime(date, dayfirst=True):
-            output_file_2.append(date_operation)
+    if date is None:
+        # date = datetime.now().strftime('%d.%m.%Y')
+        date = datetime.now().date()
+
+    # Convert date string to datetime object
+    try:
+        date = pd.to_datetime(date, dayfirst=True)
+    except ValueError:
+        raise ValueError("Invalid date format. Please use 'DD.MM.YYYY'.")
+
+    # Load transactions from Excel or use existing DataFrame
+    df = pd.read_excel(dir_transactions_excel) if isinstance(transactions, pd.DataFrame) else transactions
+
+    # Преобразование даты
+    # transactions['Дата операции'] = pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y')
+    # transactions['Дата операции'] = pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y')
+    # transactions['Дата операции'] = pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y %H:%M:%S',
+    #                                                errors='coerce')
+    # Filter transactions by category
+    filtered_transactions = df[df['Категория'] == category]
+
+    # Get the date range
+    start_date = date - timedelta(days=90)
+    end_date = date
+
+    # Further filter transactions by date range
+    recent_transactions = filtered_transactions[
+        (pd.to_datetime(filtered_transactions['Дата операции'], dayfirst=True) >= start_date) &
+        (pd.to_datetime(filtered_transactions['Дата операции'], dayfirst=True) <= end_date)
+    ]
+    logger.info("Выполняется фильтрация по заданной категории")
     logger.info("Траты по заданной категории за последние 3 месяца от переданной даты")
-    return output_file_2
+    return recent_transactions.to_dict('records')
+
 
 
 if __name__ == '__main__':
