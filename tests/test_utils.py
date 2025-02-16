@@ -53,12 +53,12 @@ def test_user_transactions(mock_read_excel):
 #
 #     pd.testing.assert_frame_equal(result, expected)
 
-
+# 21.03.2019 17:01:37
 # Создаем тестовые данные
 transactions_data = {
     'Дата операции': [
-        '2023-10-01', '2023-10-05', '2023-10-10',
-        '2023-10-15', '2023-10-20', '2023-10-25'
+        '01.10.2023 17:01:37', '05.10.2023 17:01:37', '10.10.2023 17:01:37',
+        '15.10.2023 17:01:37', '20.10.2023 17:01:37', '25.10.2023 17:01:37'
     ],
     'Сумма операции с округлением': [100, 200, 300, 400, 500, 600]
 }
@@ -73,10 +73,14 @@ def test_max_five_transactions(monkeypatch):
     monkeypatch.setattr(pd, "read_excel", lambda _: df_test)
 
     # Дата для фильтрации
-    test_date = datetime(2023, 10, 15)
+    test_date = datetime(2023, 10, 21, 00, 00, 00)
 
+    # top_transactions = filtered_df.sort_values(by='Сумма операции с округлением', ascending=False).head(5)
     # Ожидаемый результат
-    expected_result = df_test.loc[2:5].sort_values(
+    # expected_result = df_test.loc[2:5].sort_values(
+    #     by='Сумма операции с округлением', ascending=False
+    # ).head(5)
+    expected_result = df_test.loc[0:4].sort_values(
         by='Сумма операции с округлением', ascending=False
     ).head(5)
 
@@ -90,6 +94,8 @@ def test_max_five_transactions(monkeypatch):
 
     result = result.reset_index(drop=True)
     expected_result = expected_result.reset_index(drop=True)
+    print(expected_result)
+    print(result)
     pd.testing.assert_frame_equal(result, expected_result)
 
 

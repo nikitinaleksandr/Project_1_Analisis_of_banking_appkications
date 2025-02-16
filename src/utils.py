@@ -68,14 +68,23 @@ def max_five_transactions(data_time: pd.Timestamp) -> pd.DataFrame:
     """
     df = pd.read_excel(dir_transactions_excel)
 
+    # # Фильтрация транзакций за указанный месяц
+    # df_filtered = df.loc[
+    #     (pd.to_datetime(df['Дата операции'], dayfirst=True) <= data_time) &
+    #     (pd.to_datetime(df['Дата операции'], dayfirst=True) >= data_time.replace(day=1))
+    # ]
+    # Создаем копию для фильтрации
+    filtered_df = df.copy()
+
     # Фильтрация транзакций за указанный месяц
-    df_filtered = df.loc[
-        (pd.to_datetime(df['Дата операции'], dayfirst=True) <= data_time) &
-        (pd.to_datetime(df['Дата операции'], dayfirst=True) >= data_time.replace(day=1))
-    ]
+    filtered_df = filtered_df.loc[
+        (pd.to_datetime(filtered_df['Дата операции'], format="%d.%m.%Y %H:%M:%S", dayfirst=True) <= data_time) &
+        (pd.to_datetime(filtered_df['Дата операции'],  format="%d.%m.%Y %H:%M:%S",dayfirst=True) >= data_time.replace(day=1))
+        ]
+
 
     # Сортировка и получение 5 лучших транзакций
-    top_transactions = df_filtered.sort_values(by='Сумма операции с округлением', ascending=False).head(5)
+    top_transactions = filtered_df.sort_values(by='Сумма операции с округлением', ascending=False).head(5)
     return top_transactions
 
 

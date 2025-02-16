@@ -72,7 +72,7 @@ def spending_by_category(transactions: pd.DataFrame,
     # transactions['Дата операции'] = pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y')
     # transactions['Дата операции'] = pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y %H:%M:%S',
     #                                                errors='coerce')
-    transactions['Дата операции'] = pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y')
+    # transactions['Дата операции'] = pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y')
 
     if date is None:
         # date = datetime.now().strftime('%d.%m.%Y')

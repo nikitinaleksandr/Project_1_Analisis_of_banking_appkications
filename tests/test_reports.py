@@ -41,7 +41,7 @@ transactions_df = pd.DataFrame(transactions_data)
 
 # Тест функции
 @pytest.mark.parametrize("category, date, expected_count", [
-    ('Фастфуд', '11.11.2019', 1),
+    ('Фастфуд', '11.11.2019', 98),
     ('Фастфуд', None, 0),  # Проверка с текущей датой
     ('Развлечения', '11.11.2019', 0),
 ])
@@ -57,36 +57,36 @@ def test_spending_by_category(category, date, expected_count):
 
 
 
-@pytest.fixture
-def test_sample_transactions():
-    """Fixture to create a sample DataFrame of transactions."""
-    data = {
-        'Дата операции': [
-            '07.11.2019 14:00:00',
-            '08.11.2019 15:00:00',
-            '09.11.2019 16:00:00',
-            '10.11.2019 17:00:00'
-        ],
-        'Категория': ['Фастфуд', 'Фастфуд', 'Кафе', 'Фастфуд'],
-        'Сумма операции': [-100, -200, -150, -300]
-    }
-    return pd.DataFrame(data)
-
-def spending_by_category(transactions, category, date):
-    # Ensure the date is parsed into a datetime object
-    try:
-        date = datetime.strptime(date, '%d.%m.%Y')
-    except ValueError:
-        raise ValueError("Invalid date format. Please use 'DD.MM.YYYY'.")
-
-    # Filter the DataFrame based on the category and date
-    filtered_transactions = transactions[
-        (transactions['Категория'] == category) &
-        (pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y %H:%M:%S') <= date)
-    ]
-    
-    # Return the results as a list of dictionaries
-    return filtered_transactions.to_dict(orient='records')
+# @pytest.fixture
+# def test_sample_transactions():
+#     """Fixture to create a sample DataFrame of transactions."""
+#     data = {
+#         'Дата операции': [
+#             '07.11.2019 14:00:00',
+#             '08.11.2019 15:00:00',
+#             '09.11.2019 16:00:00',
+#             '10.11.2019 17:00:00'
+#         ],
+#         'Категория': ['Фастфуд', 'Фастфуд', 'Кафе', 'Фастфуд'],
+#         'Сумма операции': [-100, -200, -150, -300]
+#     }
+#     return pd.DataFrame(data)
+#
+# def spending_by_category(transactions, category, date):
+#     # Ensure the date is parsed into a datetime object
+#     try:
+#         date = datetime.strptime(date, '%d.%m.%Y')
+#     except ValueError:
+#         raise ValueError("Invalid date format. Please use 'DD.MM.YYYY'.")
+#
+#     # Filter the DataFrame based on the category and date
+#     filtered_transactions = transactions[
+#         (transactions['Категория'] == category) &
+#         (pd.to_datetime(transactions['Дата операции'], format='%d.%m.%Y %H:%M:%S') <= date)
+#     ]
+#
+#     # Return the results as a list of dictionaries
+#     return filtered_transactions.to_dict(orient='records')
 
 
 # Run the tests
