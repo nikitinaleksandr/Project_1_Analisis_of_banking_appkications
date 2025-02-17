@@ -47,11 +47,12 @@ def user_transactions(data_time: pd.Timestamp) -> pd.DataFrame:
     df = pd.read_excel(dir_transactions_excel)
 
     # Фильтрация транзакций за указанный месяц
-    df_filtered = df.loc[
-        (pd.to_datetime(df['Дата операции'], dayfirst=True) <= data_time) &
-        (pd.to_datetime(df['Дата операции'], dayfirst=True) >= data_time.replace(day=1))
-    ]
-
+    # df_filtered = df.loc[
+    #     (pd.to_datetime(df['Дата операции'], dayfirst=True) <= data_time) &
+    #     (pd.to_datetime(df['Дата операции'], dayfirst=True) >= data_time.replace(day=1))
+    # ]
+    df_filtered = df.loc[(pd.to_datetime(df['Дата операции'], dayfirst=True) <= data_time) &
+        (pd.to_datetime(df['Дата операции'], dayfirst=True) >= data_time.replace(day=1))].copy()
     # Расчет кэшбека и группировка по номеру карты
     # df_filtered['кэшбек'] = df_filtered['Сумма операции с округлением'] // 100
     df_filtered.loc[:, 'кэшбек'] = df_filtered['Сумма операции с округлением'] // 100
@@ -102,7 +103,7 @@ def exchange_rate() -> list:
         headers = {"apikey": API_KEY_exchange}
 
         response = requests.get(url, headers=headers)
-        print("Response:", response.text)  # Отладочный вывод
+        # print("Response:", response.text)  # Отладочный вывод
         
         result = response.json()
         currency_value = result.get('result')
