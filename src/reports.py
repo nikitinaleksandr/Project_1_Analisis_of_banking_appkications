@@ -1,17 +1,16 @@
-import os
-from calendar import month
-from pathlib import Path
+from src.logger import setup_logging
 import json
-import pandas as pd
-import logging
-import pytest
-from datetime import datetime
-from datetime import timedelta
+import os
+from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional
+import pandas as pd
+
 current_dir = Path(__file__).parent.parent.resolve()
 dir_transactions_excel = current_dir/'data'/'operations.xlsx'
 print(dir_transactions_excel)
-from src.logger import setup_logging
+
+
 current_dir = Path(__file__).parent.parent.resolve()
 file_path_log = current_dir/'../log', 'reports.log'
 # base_dir = "tests"
@@ -19,8 +18,6 @@ file_path_log = current_dir/'../log', 'reports.log'
 # file_name = "test_file.txt"
 # full_path = os.path.join(base_dir, sub_dir, file_name)
 # print(full_path)
-
-
 
 logger = setup_logging('reports', file_path_log)
 
@@ -57,7 +54,6 @@ def save_report(filename=None):
             return result
         return inner
     return wrapper
-        # setup_logging.info(f"Отчет сохранен в файл: {filename}")
 
 
 @save_report()
@@ -108,9 +104,6 @@ def spending_by_category(transactions: pd.DataFrame,
     logger.info("Траты по заданной категории за последние 3 месяца от переданной даты")
     return recent_transactions.to_dict('records')
 
+
 if __name__ == '__main__':
     spending_by_category(pd.read_excel(dir_transactions_excel), 'Фастфуд', '11.11.2019')
-
-
-
-

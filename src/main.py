@@ -1,18 +1,15 @@
-import datetime
-from datetime import datetime
-import typing
-import json
+from typing import Any
+
 import pandas as pd
-from typing import Any, Dict, List, Union
-from src.utils import day_time_now, user_transactions, max_five_transactions, exchange_rate, get_price_stocks_snp500
-from src.services import transactions
+
+from src.reports import dir_transactions_excel, spending_by_category
+from src.services import simple_search, transactions
 from src.views import website
-from src.services import simple_search
-from src.reports import spending_by_category, dir_transactions_excel
 
 
 def main() -> Any:
-        """Функция для запуска всего проекта"""
+    """Функция для запуска всего проекта"""
+    print("Функция для запуска всего проекта")
 
 
 if __name__ == '__main__':

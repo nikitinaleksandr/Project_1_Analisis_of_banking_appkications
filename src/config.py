@@ -1,8 +1,5 @@
 import os
-import json
-import pandas as pd
 from dotenv import load_dotenv
-
 
 load_dotenv()
 API_KEY_exchange = os.getenv('API_KEY_exchange')

@@ -1,17 +1,14 @@
-from src.config import API_KEY_exchange, API_KEY_stocks
 import datetime
-import requests
-import json
-import os
 from pathlib import Path
-from dotenv import load_dotenv
+
 import pandas as pd
+import requests
+from dotenv import load_dotenv
+
+from src.config import API_KEY_exchange, API_KEY_stocks
 
 # Загрузка переменных окружения
 load_dotenv('../.env')
-
-# Настройка логирования (предполагается, что функция setup_logging определена в src.logger)
-from src.logger import setup_logging
 
 # Определение текущего каталога
 current_dir = Path(__file__).parent.parent.resolve()
@@ -52,7 +49,7 @@ def user_transactions(data_time: pd.Timestamp) -> pd.DataFrame:
     #     (pd.to_datetime(df['Дата операции'], dayfirst=True) >= data_time.replace(day=1))
     # ]
     df_filtered = df.loc[(pd.to_datetime(df['Дата операции'], dayfirst=True) <= data_time) &
-        (pd.to_datetime(df['Дата операции'], dayfirst=True) >= data_time.replace(day=1))].copy()
+                         (pd.to_datetime(df['Дата операции'], dayfirst=True) >= data_time.replace(day=1))].copy()
     # Расчет кэшбека и группировка по номеру карты
     # df_filtered['кэшбек'] = df_filtered['Сумма операции с округлением'] // 100
     df_filtered.loc[:, 'кэшбек'] = df_filtered['Сумма операции с округлением'] // 100
@@ -79,11 +76,11 @@ def max_five_transactions(data_time: pd.Timestamp) -> pd.DataFrame:
 
     # Фильтрация транзакций за указанный месяц
     filtered_df = filtered_df.loc[
-        (pd.to_datetime(filtered_df['Дата операции'], format="%d.%m.%Y %H:%M:%S", dayfirst=True) <= data_time) &
-        (pd.to_datetime(filtered_df['Дата операции'],  format="%d.%m.%Y %H:%M:%S",dayfirst=True) >= data_time.replace(day=1))
+        (pd.to_datetime(filtered_df['Дата операции'],
+                        format="%d.%m.%Y %H:%M:%S", dayfirst=True) <= data_time) &
+        (pd.to_datetime(filtered_df['Дата операции'],
+                        format="%d.%m.%Y %H:%M:%S", dayfirst=True) >= data_time.replace(day=1))
         ]
-
-
     # Сортировка и получение 5 лучших транзакций
     top_transactions = filtered_df.sort_values(by='Сумма операции с округлением', ascending=False).head(5)
     return top_transactions
@@ -104,7 +101,6 @@ def exchange_rate() -> list:
 
         response = requests.get(url, headers=headers)
         # print("Response:", response.text)  # Отладочный вывод
-        
         result = response.json()
         currency_value = result.get('result')
 

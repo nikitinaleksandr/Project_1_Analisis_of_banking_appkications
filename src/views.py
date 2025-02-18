@@ -1,15 +1,11 @@
-# from utils import day_time_now, user_transactions
+from src.utils import (day_time_now, exchange_rate, get_price_stocks_snp500, max_five_transactions, user_transactions)
+from typing import Union
+import pandas as pd
 import datetime
-import requests
-import json
-import os
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv('../.env')
-from typing import Union
-from src.utils import day_time_now, user_transactions, exchange_rate, max_five_transactions, get_price_stocks_snp500
 
-import pandas as pd
 current_dir = Path(__file__).parent.parent.resolve()
 
 dir_transactions_excel = current_dir/'data'/'operations.xlsx'
@@ -46,9 +42,6 @@ def website(data_time: datetime) -> Union[list, dict]:
     return result1, result2, result3, result4, result5
 
 
-
-
-
 if __name__ == '__main__':
 
     print(f'{day_time_now()}')
@@ -58,8 +51,3 @@ if __name__ == '__main__':
     print("Результат транзакций:")
     print(result)
     print("Пять максимальных транзакций:")
-#     print(max_five_transactions(data_time))
-#     print("Курсы валют:")
-#     print(exchange_rate())
-#     print("stocks_snp500:")
-#     print(get_price_stocks_snp500())

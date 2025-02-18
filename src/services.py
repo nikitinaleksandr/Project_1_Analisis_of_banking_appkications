@@ -1,13 +1,12 @@
-import json
-from typing import Any, Dict, List, Union
-import logging
-from src.logger import setup_logging
 from pathlib import Path
+from typing import Any, Dict, List
 
+from src.logger import setup_logging
 
 current_dir = Path(__file__).parent.parent.resolve()
 file_path_log = current_dir/'../log', 'services.log'
 logger = setup_logging('services', file_path_log)
+
 
 def simple_search(search_str: str, transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
@@ -43,15 +42,9 @@ def simple_search(search_str: str, transactions: List[Dict[str, Any]]) -> List[D
     result = new_list_transactions
     # result = json.dumps(new_list_transactions)
     logger.info("Вывод отфильтрованных по заданной пользователем строке транзакций")
-        # for i in item:
-        #     print(i)
-        #     if seach_str in i:
-        #         new_list_transactions.append(item)
-    # print(new_list_transactions)
+
     if search_str == "" or search_str == None or not transactions:
         return []
-
-
     # result_json = json.dumps(result, ensure_ascii=False)
     # print(result_json)
     print("Результат simple_search:", result)
